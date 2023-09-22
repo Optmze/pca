@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Loads CSV Dataset
 def loadCSVObservation(file):
@@ -49,13 +50,18 @@ for i in range(0,subgroups):
     samples.append(df_chose)
     print(df_chose)
 
+# VARIABLE DATA CHARTS 
+# If subgroup size = 1: X-MR or I-MR Chart (basically individual)
+# Subgroup size between 2 and 10 : Xbar-R Chart
+# Subgroup Size 11 or more: Xbar - S chart
 #----------------------------------------------------XBAR-CHARTS-----------------------------------------------------
-#user-inputed driven
+#Specification Limits, given by user
 USL = 2.3
 target = 1.5
 LSL = 0.1
 
-#fractional defect based/formula based
+
+
 #https://www.moresteam.com/toolbox/statistical-process-control-spc.cfm
 
 #Histogram and Curve Fitting
@@ -86,9 +92,9 @@ USL_range = 10
 LSL_range = 0
 ranges = []
 for j in samples:
-    xbar.append(max(j)-min(j))
+    ranges.append(max(j)-min(j))
 range_df = pd.DataFrame(ranges,columns=['ranges'])
-range_df.plot(kind='line',xlim=(0,len(xbar)),y='xbar',style='.-')
+range_df.plot(kind='line',xlim=(0,len(xbar)),y='ranges',style='.-')
 plt.title('Ranges')
 plt.axhline(USL_range,linestyle="--",color="red",label="USL")
 plt.axhline(LSL_range,linestyle="--",color="blue",label="LSL")
@@ -96,10 +102,14 @@ plt.show()
 plt.close()
 print(range_df)
 
-    
-#PROCESS-COMPONENT-ANALYSIS
-#Attribute Data Analysis
+# Calculate Cp and Cpk
+Cp = (USL-LSL)/(6*np.std(df_left))    
+Cpk = min((USL-df_left.mean())/(3*df_left.std()),(df_left.mean()-LSL)/(3*df_left.std()))
+print("Cp:{0}".format(Cp))
+print("Cpk:{0}".format(Cpk))
 
-#Variable Data Analysis
+# ATTRIBUTE DATA CHART
+
+#PROCESS-COMPONENT-ANALYSIS
 
 
