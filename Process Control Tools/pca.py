@@ -66,8 +66,6 @@ plt.axvline(LSL,linestyle="--",color="blue",label="LSL")
 plt.axvline(target,linestyle="--",color ="green",label="target")
 
 #Xbar-Chart
-
-    
 xbar = []
 for j in samples:
      xbar.append(j.mean())
@@ -83,14 +81,20 @@ plt.close()
 print(xbar_df)
     
     
-
-
-
-
-
-
-
 #R-Chart
+USL_range = 10
+LSL_range = 0
+ranges = []
+for j in samples:
+    xbar.append(max(j)-min(j))
+range_df = pd.DataFrame(ranges,columns=['ranges'])
+range_df.plot(kind='line',xlim=(0,len(xbar)),y='xbar',style='.-')
+plt.title('Ranges')
+plt.axhline(USL_range,linestyle="--",color="red",label="USL")
+plt.axhline(LSL_range,linestyle="--",color="blue",label="LSL")
+plt.show()
+plt.close()
+print(range_df)
 
     
 #PROCESS-COMPONENT-ANALYSIS
