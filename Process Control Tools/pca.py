@@ -50,6 +50,8 @@ for i in range(0,subgroups):
     samples.append(df_chose)
     print(df_chose)
 
+
+
 # VARIABLE DATA CHARTS 
 # If subgroup size = 1: X-MR or I-MR Chart (basically individual)
 # Subgroup size between 2 and 10 : Xbar-R Chart
@@ -61,8 +63,6 @@ target = 1.5
 LSL = 0.1
 
 
-
-#https://www.moresteam.com/toolbox/statistical-process-control-spc.cfm
 
 #Histogram and Curve Fitting
 df_left.plot(kind='hist',xlim=(min(df_left),max(df_left)),density=True)
