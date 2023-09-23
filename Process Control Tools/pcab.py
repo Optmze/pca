@@ -27,6 +27,7 @@ def loadCSVObservation(file):
 
 
 # SAMPLE GENERATION
+# Two kinds: Random Sample Generator and Consecutive Sample Generator (for time series)
 
 ''' 
 Random Sample Generator
@@ -65,6 +66,7 @@ def consecutiveGenerator(sample_size,subgroups,label):
 
 
 # CONSTANT RETRIEVAL 
+# Retrieves constants c(n) and d(n) for unbiased estimates 
 
 '''
 C(n)
@@ -93,11 +95,16 @@ def D(n):
     else:
         return D3[n-2],D4[n-2]
 
-# VARIABLE CHART GENERATION (Xbar,R,S,X,mR,Histogram)
+
+#VARIABLE CHART GENERATION (Xbar,R,S,X,mR,Histogram)
+# If subgroup = 1: X-MR Chart
+# If subgroup between 2 and 10 : X'-R Chart
+# If subgroup size >= 11 : X'-S Chart
+
 
 '''
 Xbar Chart Generator
-# Usage: Generate xbar chart
+# Usage: Generate xbar chart; monitor mean change over time
 # Input: sample_list
 # Output: Xbar chart output
 '''
@@ -169,10 +176,12 @@ def genR(sample_list,sample_size):
     center = range_bar
     LCL = D0 * range_bar
 
+
+
     print("center:{0}".format(center))
     ranges_df = pd.DataFrame(ranges,columns=['ranges'])
     ranges_df.plot(kind='line',xlim=(0,len(ranges)),y='ranges',style='.-')
-    plt.title('XBAR')
+    plt.title('R Chart')
     plt.axhline(UCL,linestyle="--",color="red",label="USL")
     plt.axhline(LCL,linestyle="--",color="blue",label="LSL")
     plt.axhline(center,linestyle="--",color="green",label="target")
@@ -180,25 +189,51 @@ def genR(sample_list,sample_size):
 
 
 '''
-mR Chart Generator (Moving Range Chart)
-# Usage: Generates moving range chart
-# Input:
+I-mR Chart Generator (Moving Range Chart)
+# Usage: Generates moving range chart;
+# mR monitors the absolute difference b/w each measurement to prev measurement
+# I monitors shifts in the process
+# Input: label,subgroups
 # Output:
 '''  
-def generateMR(sample_size):
-    pass
-
-
-'''
-X Chart Generator / Individual chart Genration
-# Usage: Generates x chart / I-chart
-# Input: label
-# Output: Run graph output
-'''  
-def runX(label):
-    df_x = observation[label].copy()
-    df_x.plot(kind='line',xlim=(0,len(df_x)),style='.-')
+def genMR(label,subgroups):
+    mr = 0
+    mrlist = []
+    for i in range(0,len(df_left)-1):
+       diff = abs(df_left[i] - df_left[i+1])
+       mr = mr + diff
+       mrlist.append(diff)
+    mr_bar = mr / (subgroups - 1)
+    print(mr_bar)
+    # Here n = 2 (as avg of two consecutive points); D3=0 and D4=3.27
+    D3 = 0
+    D4 = 3.27
+    mr_UCL = mr_bar * D4
+    mr_center = mr_bar
+    mr_LCL = mr_bar * D3
+    
+    # MR-Plot
+    mr_df = pd.DataFrame(mrlist,columns=['mr'])
+    mr_df.plot(kind='line',xlim=(0,len(mrlist)),y='mr',style='.-')
+    plt.title('MR CHART')
+    plt.axhline(mr_UCL,linestyle="--",color="red",label="USL")
+    plt.axhline(mr_LCL,linestyle="--",color="blue",label="LSL")
+    plt.axhline(mr_center,linestyle="--",color="green",label="target")
     plt.show()
+
+    # X Chart 
+    xbar = df_left.mean()
+    df_x = observation[label].copy()
+    E2 = 2.66
+    x_UCL = xbar + (E2*mr_bar)
+    x_center = xbar
+    x_LCL = xbar - (E2*mr_bar)
+    df_x.plot(kind='line',xlim=(0,len(df_x)),style='.-')
+    plt.axhline(x_UCL,linestyle="--",color="red",label="USL")
+    plt.axhline(x_LCL,linestyle="--",color="blue",label="LSL")
+    plt.axhline(x_center,linestyle="--",color="green",label="target")
+    plt.show()
+
 
 '''
 Histogram Generation and Estimation
@@ -206,13 +241,14 @@ Histogram Generation and Estimation
 # Input: usl (Upper Specification Limit), lsl (Lower Specification Limit), tgt (Target)
 # Output: Output histogram chart
 '''
-def histogram(usl,lsl,tgt,label):
+def histogram(usl,lsl,tgt):
     df_left.plot(kind='hist',xlim=(min(df_left),max(df_left)),density=True,color='green')
     sns.kdeplot(observation,label='Density')
     plt.axvline(usl,linestyle="--",color = "red",label="USL")
     plt.axvline(lsl,linestyle="--",color="blue",label="LSL")
-    plt.axvline(tgt,linestyle="--",color ="green",label="target")
+    plt.axvline(tgt,linestyle="--",color ="yellow",label="target")
     plt.show()
+
 
 '''
 S Chart Distribution
@@ -221,19 +257,43 @@ S Chart Distribution
 # Output:
 '''
 def genS(sample_size):
-    pass
+    sd = []
+    sd_sum = 0
+    for i in sample_list:
+        s = i.std()
+        sd_sum = sd_sum + s
+        sd.append(s)
+    sd_bar = sd_sum / len(sd)
+    print(sd_bar)
+    LCL = sd_bar - ((3*sd_bar) / (c(sample_size)*math.sqrt(2*(sample_size-1))))
+    center = sd_bar
+    UCL = sd_bar + ((3*sd_bar) / (c(sample_size)*math.sqrt(2*(sample_size-1))))
+    if(LCL < 0 ):
+        LCL = 0
+
+    # S-Plot
+    mr_df = pd.DataFrame(sd,columns=['mr'])
+    mr_df.plot(kind='line',xlim=(0,len(sd)),y='mr',style='.-')
+    plt.title('S CHART')
+    plt.axhline(UCL,linestyle="--",color="red",label="USL")
+    plt.axhline(LCL,linestyle="--",color="blue",label="LSL")
+    plt.axhline(center,linestyle="--",color="green",label="target")
+    plt.show()
+    
+
 
 # ATTRIBUTE CHART GENERATION (p,np,c,u)
-
+#
 
 '''
 P Chart
 # Usage:
-# Input:
+# Input: p (proportion)
 # Output:
 '''
-def genP(sample_size):
+def genP(p):
     pass
+    
 
 '''
 NP Chart
@@ -264,6 +324,10 @@ def genU(sample_size):
     pass
 
 
+# Capability Indices Calculation
+
+
+# Z-score and % Analysis
 
 
 
@@ -283,7 +347,9 @@ m=1
 #genR(sample_list,5)
 #print(d(10))
 #histogram(2.1,2,2.23,"X")
-
+#genMR("X",20)
+#genS(5)
+#histogram(2.1,1.85,2)
 
 
 
