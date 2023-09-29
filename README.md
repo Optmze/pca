@@ -4,7 +4,7 @@ pca is a single file script which implements Shewhart charts to aid with Process
 **dataset** (sample datasets) <br>
 
 MY NOTE REFERENCE FOR IMPLEMENTATION : https://docs.google.com/document/d/1pkbh8Tx12znxN-BH2zfXEK3SEfHIz5LWCbud4BF4VIE/edit <br>
-(Book = Industrial Statistics (Chapter-1))
+<br>(Book = Industrial Statistics (Chapter-1))
 
 ## Implementation Details
 These are the following components in pca.py:
