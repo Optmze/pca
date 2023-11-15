@@ -1,7 +1,7 @@
-'''
-Process Capability Analysis Tool
-Code by: Optmze (ayush.devmail@gmail.com)
-'''
+
+#Process Capability Analysis Tool
+#Code by: Optmze (ayush.devmail@gmail.com)
+
 
 import pandas as pd
 import seaborn as sns
@@ -9,12 +9,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-'''
-Load CSV
+
+# Load CSV
 # Usage:  Loads given CSV file as the dataframe "observation"
 # Input:  file (string)
 # Output: records load message / error messages
-'''
 
 def loadCSVObservation(file):
     global observation # MAIN DATAFRAME
@@ -29,12 +28,12 @@ def loadCSVObservation(file):
 # SAMPLE GENERATION
 # Two kinds: Random Sample Generator and Consecutive Sample Generator (for time series)
 
-''' 
-Random Sample Generator
+
+#Random Sample Generator
 # Usage:  Generates random samples from given dataset
 # Input:  sample_size,subgroups,label
 # Output: list of random samples
-'''
+
 def randomGenerator(sample_size,subgroups,label):
     samples = []
     df_left = observation[label].copy() #copy the required dataframe
@@ -48,12 +47,12 @@ def randomGenerator(sample_size,subgroups,label):
         droplist.clear()
     return samples
 
-'''
-Consecutive Sample Generator
+
+# Consecutive Sample Generator
 # Usage:  Gives consecutive samples from given dataset
 # Input:  sample_size,subgroups,label
 # Output: list of generated samples
-'''
+
 def consecutiveGenerator(sample_size,subgroups,label):
     global df_left
     samples = []
@@ -68,22 +67,22 @@ def consecutiveGenerator(sample_size,subgroups,label):
 # CONSTANT RETRIEVAL 
 # Retrieves constants c(n) and d(n) for unbiased estimates 
 
-'''
-C(n)
+
+#C(n)
 # Usage: Estimation of sigma
 # Input: Size of sample
 # Output: Constant value
-'''
+
 def c(n):
     return (math.gamma(n/2) / math.gamma((n-1)/2))*(math.sqrt(2/(n-1)))
 
 
-'''
-D(n)
+
+# D(n)
 # Usage: Estimation of Range; has values for n=2 to n=10 
 # Input: Sample Size
 # Output: Constant value
-'''
+
 def D(n):
     D3 = [0,0,0,0,0.076,0.136,0.184,0.223]
     D4 = [3.267,2.574,2.82,2.114,2.004,1.924,1.864,1.816,1.777]
@@ -102,12 +101,12 @@ def D(n):
 # If subgroup size >= 11 : X'-S Chart
 
 
-'''
-Xbar Chart Generator
+
+# Xbar Chart Generator
 # Usage: Generate xbar chart; monitor mean change over time
 # Input: sample_list
 # Output: Xbar chart output
-'''
+
 def genXbar(sample_list,sample_size):
     n = len(sample_list)
     xbar = []
@@ -153,12 +152,12 @@ def genXbar(sample_list,sample_size):
     plt.show()
     plt.close()
 
-'''
-R Chart Generator
+
+# R Chart Generator
 # Usage: Generates range chart (sample size n=2 to n=10)
 # Input: sample_list and sample_size
 # Output: R chart output
-'''  
+ 
 def genR(sample_list,sample_size):
     ranges = []
     range_sum = 0
@@ -188,14 +187,14 @@ def genR(sample_list,sample_size):
     plt.show()
 
 
-'''
-I-mR Chart Generator (Moving Range Chart)
+
+# I-mR Chart Generator (Moving Range Chart)
 # Usage: Generates moving range chart;
 # mR monitors the absolute difference b/w each measurement to prev measurement
 # I monitors shifts in the process
 # Input: label,subgroups
 # Output: I and MR chart for given data
-'''  
+
 def genMR(label,subgroups):
     mr = 0
     mrlist = []
@@ -236,12 +235,12 @@ def genMR(label,subgroups):
     plt.show()
 
 
-'''
-Histogram Generation and Estimation
+
+# Histogram Generation and Estimation
 # Usage: Generates histogram and an estimate (within and overall)
 # Input: usl (Upper Specification Limit), lsl (Lower Specification Limit), tgt (Target)
 # Output: Output histogram chart
-'''
+
 def histogram(usl,lsl,tgt):
     df_left.plot(kind='hist',xlim=(min(df_left),max(df_left)),density=True,color='green')
     sns.kdeplot(observation,label='Density')
@@ -251,12 +250,12 @@ def histogram(usl,lsl,tgt):
     plt.show()
 
 
-'''
-S Chart Distribution
+
+#mS Chart Distribution
 # Usage: S-chart; usually for larger subgroup sizes
 # Input: sample_list (the list of samples), sample_size(the size of each sample)
 # Output: S-chart for given data
-'''
+
 def genS(sample_list,sample_size):
     sd = []
     sd_sum = 0
@@ -284,14 +283,14 @@ def genS(sample_list,sample_size):
 
 
 # ATTRIBUTE CHART GENERATION (p,np,c,u)
-#
 
-'''
-P Chart
+
+
+# P Chart
 # Usage: Build the p chart; if n =100 and say 22 defective items (np) so p = np/n = 0.22
 # Input: p (proportion label),np (label), sample (size label) [csv must have p,np,sample]
 # Output: p-chart for given data
-'''
+
 def genP(p,np,sample_size):
     df_p = observation[p].copy()
     df_np = observation[np].copy()
@@ -320,12 +319,12 @@ def genP(p,np,sample_size):
     plt.axhline(center,linestyle="--",color="green",label="target")
     plt.show()
 
-'''
-NP Chart
+
+# NP Chart
 # Usage: np chart, subgroup size(n) is constant; k = no of subgroups
 # Input: np (label for np), n (total subroup size 50)
 # Output: np chart of given data
-'''
+
 def genNP(np,n):
     np_df = observation[np].copy()
     k = len(np_df)
@@ -353,12 +352,12 @@ def genNP(np,n):
 # conditions:
 # discrete counts, well-defined time/space occurence, counts should be rare in comparison to opportunityy, independent counts
 
-'''
-C Chart
+
+# C Chart
 # Usage: generate c chart; if area of opportunity(inspection unit) does not change from subgroup to subgroup
 # Input: c(no of defects in each subgroup); k = total no of subgroups
 # Output: c - chart of given data
-'''
+
 def gencc(c,k):
     df_c = observation[c].copy() # no of defects in each subgroup
     c_sum = 0
@@ -378,13 +377,13 @@ def gencc(c,k):
     plt.show()
 
 
-'''
-U Chart
+
+# U Chart
 # Usage: Generate u chart; if area of opportunity changes ( c = no of infections; n = no of units); in some caes it's k ; u = c/k where k is subgroup size
 # Input: c = no of defects in each unit; n = no of units (since variable size)
 # Output: u chart of given data
 # note: the subgroup size is not constant it varies
-'''
+
 def genU(c,n):
     sample = observation.copy()
     sample['u'] = sample[c].div(sample[n]) # u chart values
@@ -460,11 +459,10 @@ def calcCI(LSL,USL,sample_list,sample_size):
 
 
 
-'''
-DRIVER CODE 
-Driver code to showcase how the functions work
-Will be used ahead when integrating all components
-'''
+
+#DRIVER CODE 
+#Driver code to showcase how the functions work
+
 filename = "dataset\\lengths.csv" # always add \\ for file name 
 loadCSVObservation(file=filename)
 sample_list = consecutiveGenerator(5,20,"X")
