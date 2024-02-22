@@ -20,9 +20,9 @@ def loadCSVObservation(file):
     try:
         observation = pd.read_csv(file)
         obsno = len(observation)
-        print("STATFLOW >> {0} records from {1} loaded. ".format(obsno,file))
+        print("pca >> {0} records from {1} loaded. ".format(obsno,file))
     except:
-        print("STATFLOW >> Error loading {0} (did you provide the correct path?)".format(file))
+        print("pca >> Error loading {0} (did you provide the correct path?)".format(file))
 
 
 # SAMPLE GENERATION
