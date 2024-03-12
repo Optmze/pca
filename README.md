@@ -1,5 +1,8 @@
 # pca
-pca is a single file script which implements Shewhart charts to aid with Process Control Analysis. My self made notes and research on the concerned domain while constructing the implementation is given below<br>
+pca is a single file script which implements Shewhart charts to aid with Process Control Analysis. <br>
+
+<b>For more detailed notes that I took while trying to implement the same can be found here:</b>
+https://docs.google.com/document/d/1pkbh8Tx12znxN-BH2zfXEK3SEfHIz5LWCbud4BF4VIE/edit?usp=sharing
 
 ***Process Control Notes by Optmze(<ayush.devmail@gmail.com>)***
 
@@ -40,13 +43,6 @@ Also note how there’s a shift after the 8th sample we see the new average cycl
 
 **NOTE:** A run chart doesn’t have UCL and LCL, by adding those it becomes a control chart. Control charts have wide applicability
 
-Another important part is generating and routing of data through proper feedback loops(two types:external and internal feedback loop. For example:<br>
-Process = Driving to work
-
-The time it takes is variable and depends on several factors over which we have little or no control due to which variation arises, we may even have special cases in cases say your tire is punctured.**External feedback loops rely on measurements of the process outcome.** (like monitoring time after you reach work). If a radio tells us about traffic jams etc, this is a source of internal feedback, basically data on process variables measured internally to the process.<br>
-![6](https://github.com/Optmze/pca/assets/95652520/f9f8489b-ef4e-4408-89a9-1e248da89f7a)
-
-SPC = rule of behavior to strike a balance for net economic loss from looking for special causes to often and not looking enough. We have two phases -> **achieving control** (study causes of variation and try to eliminate it) (use modern statistical analysis) and **maintaining control** (once control is achieved it is about maintaining it).
 
 ## **Driving a process with Control Charts:**
 
@@ -133,40 +129,6 @@ Common practice to estimate Cp or Cpk:
 
 (X’ is sample mean)
 
-**REVIEW/ MORE DETAIL ON PROCESS CAPABILITY ANALYSIS**
-
-Say a customer says that bottle weight should lie between 485g and 495g, with a target of 490g and we have four processes.(assuming normal distribution)
-
-A fall out = no of non conforming bottles per millions/ ones that fail to meet customer specification SQL(sigma quality level) or Z is quantitative measure for any process
-
-![17](https://github.com/Optmze/pca/assets/95652520/8fc1ec31-1db7-4c31-b60c-2a8ea169f78f) <br>
-![18](https://github.com/Optmze/pca/assets/95652520/2a523b48-8e9c-4a63-9f18-20a1186efe71)
-
-
-Though SQL is supposed to summarize performance in a single number, but we should not purely base it on the SQL as the 4th line has high potential (low sd) but the SQL doesn’t reflect that; capability indices also intend to the same; measure process expectation and customer expectation.
-
-Now for a normal distribution 99.73% of observations will lie between ![19](https://github.com/Optmze/pca/assets/95652520/e330f710-7f77-44c5-905a-3366b3456ee8) These are the natural tolerance limits; only 0.27% of observations will be outside that; The customer tolerance range is range that customer will tolerate (USL - LSL); Cp is the ratio of these two;
-
-Line 4 has highest Cp, Line 1 and 2 intermediate and Line 3 has the lowest; index Cp measures the potential capability of the process; 1 and 2 have the same potential capability, their actual capability in terms of fall-out and so SQL values differs because if you look at the target lines in both of them, line 2 does not operate on that. Disadvantage of Cp is that it does not take process location to account; However Cpk does take that into account:!![20](https://github.com/Optmze/pca/assets/95652520/e61df407-c3e3-4ae2-b8ba-f4e48cd0e046) ![21](https://github.com/Optmze/pca/assets/95652520/bee351b5-a90f-464e-8963-2dcf33236311) <br> 
-![22](https://github.com/Optmze/pca/assets/95652520/3d0207fb-d208-4e61-9f87-339e1b2487ca)
-
-
-Cpk measure actual capability; when Cp = Cpk (process mean coincides with target value in between the USL and LSL; centered process (also since we are taking min/max we can calculate cpk with onlyone spec limit as putting infinity does not hinder the finding of max/min; example weight should be more that 25kg)
-
-For six sigma process; Cp = 2 and Cpk no less than 1.5 (failure rate of 0.00034% for a six sigma operation; virtually no defects)
-
-Example: Here we will estimate the indices from data; subgroups of size 4 we look at x bar charts and see if any special cause variation is applied; reasonable to stack the data into a single column and consider it as a sample of 100 observations; (25 \* 4 )
-
-Normal probability plot Histogram of 100 observations of weight and fit<br>
-![24](https://github.com/Optmze/pca/assets/95652520/83e8831f-f0a8-40ce-81ee-dccfb276f3cf) ![25](https://github.com/Optmze/pca/assets/95652520/8533d86c-9a8d-49a8-9911-04bd86dff8e0) <br> X-bar-R Chart of x1,..,x4:<br> ![26](https://github.com/Optmze/pca/assets/95652520/7be4f951-163e-4fb0-92e3-e48701bed27a)  ![27](https://github.com/Optmze/pca/assets/95652520/a4c4a2c5-47f0-435c-a1bc-ad01f3caca98) <br>
-![28](https://github.com/Optmze/pca/assets/95652520/ef6e91b8-1153-4e46-b216-6fd024f1d40a)
-
-In the x-bar chart we see that some values lie out of the specification by being underweight. Usually a process with Cp less than 1 is considered to be incapable; Cpk less than Cp indicates that the process is not centered. We see the chart on top right: <br>
-- Histogram of 100 (25 subgroups of 4 bottles) - two normal distributions = within (solid curve) and overall (dashed curve)
-- Two estimates of the process standard deviation = within and overall; which are basically estimates of the process standard deviation; within value = 2.03915 was obtained using 25 stds and the other way is just use the whole data set; overall s = 2.09359, (sample std s provides a biased estimate of sigma); an unbiased estimate is obtained by dividing s/c4; here c4 = 0.99748 so 2.09355/0.99748 = 2.09888 -> two normal curves: N(489.754,2.03915^2) and N(489.754,2.0988^2);
-- 3 bottles from 100 bottles had weight less than LSL and none above USL; so in a million we have 30000 ppm failing to meet specification
-
-**Note:** Use USL and LSL for the histogram and see how many fall out of ranges
 
 ## **THE SHEWHART CONTROL CHARTS** <br>
 The detection procedure:<br>
@@ -220,26 +182,6 @@ The R chart can be constructed using similar technique ; center line = R’ Cont
 ![44](https://github.com/Optmze/pca/assets/95652520/42f4d006-35ca-4fe0-b245-59eadb8d05c0)
 
 
-## **Final points:**
-
-The decision to use R-chart, S-chart depends on which method works best; both methods based on approximations; BUT NOTE THAT avg value of n depends on the sample size n (because if n increases the range increases); but with standard deviation as the sample size increases S will be an even closer estimate to the true value.
-
-Cp tells how many sd fit inside the specification limits (but does not take into consideration if process is centered)
-
-**Capability Indices**:<br>
-![45](https://github.com/Optmze/pca/assets/95652520/d48750e5-1cdb-4474-82b7-ed4dbf6a40a5) 
-![46](https://github.com/Optmze/pca/assets/95652520/d95ed26f-511d-4c7f-b2f0-589c2308b0b8)
-
-
-Cp and Cpk doesn’t reflect the long term; for that we have Pp and Ppk:<br>
-![49](https://github.com/Optmze/pca/assets/95652520/65c7c861-6794-4b96-b4e2-f5a804e166dc)<br>
-<br>
-![50](https://github.com/Optmze/pca/assets/95652520/d495627e-17e8-4d65-b076-c94cefbcf876)
-![51](https://github.com/Optmze/pca/assets/95652520/4cd2dfe1-093e-46a4-bb18-2a2e81861193)
-![52](https://github.com/Optmze/pca/assets/95652520/05929b7f-415e-48a1-97e6-875724252690)<br>
-
-
-
 
 ## **Z-SCORE**
 
@@ -249,15 +191,13 @@ Higher Z score means more sds are within specification limits and the process av
 
 
 
-
 ## **Tools for Process Control and Process Improvement**
-Flow Charts, Check Sheets(data collection), Run Charts, Histogram,Pareto Charts,Scatter Plots,Cause and Effect Diagrams
+Flow Charts, Check Sheets(data collection), Run Charts, Histogram,Pareto Charts,Scatter Plots,Cause and Effect Diagrams 
 
 
 ## References:
 > 1.Google Images for certain graph images <br>
 > 2.Industrial Statistics: A Computer-Based Approach with Python by Ron S.Kennet, Shelemyahu Zacks and Peter Gedeck
 
-A google doc version of my notes above can be found at: <br>
-https://docs.google.com/document/d/1pkbh8Tx12znxN-BH2zfXEK3SEfHIz5LWCbud4BF4VIE/edit?usp=sharing
+
 
